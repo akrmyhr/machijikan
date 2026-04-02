@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: machijikan
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: STAFF_PASSWORD
+        sync: false
+      - key: NODE_ENV
+        value: production

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="宮平医院の待ち人数をリアルタイムで確認できます。">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>待ち人数 | 宮平医院</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/icon-192.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/patient.css">
+</head>
+<body>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <main class="container">
+    <header class="clinic-header">
+      <div class="clinic-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="14" width="40" height="30" rx="4" fill="rgba(255,255,255,0.15)" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M14 14V8a10 10 0 0 1 20 0v6" stroke="currentColor" stroke-width="2.5" fill="none"/>
+          <rect x="20" y="22" width="8" height="14" rx="1" fill="currentColor" opacity="0.3"/>
+          <rect x="17" y="26" width="14" height="6" rx="1" fill="currentColor" opacity="0.3"/>
+          <line x1="24" y1="22" x2="24" y2="36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="17" y1="29" x2="31" y2="29" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="clinic-name">宮平医院</h1>
+    </header>
+
+    <div class="card">
+      <p class="card-label">ただいまの待ち人数</p>
+
+      <div class="count-display" id="count-display">
+        <span class="count-number" id="count-number">-</span>
+        <span class="count-unit">名</span>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-dot" id="status-dot"></div>
+        <span class="status-text" id="status-text">接続中...</span>
+      </div>
+
+      <p class="last-updated" id="last-updated"></p>
+    </div>
+
+    <div class="message-area" id="message-area">
+      <p class="message-text" id="message-text"></p>
+    </div>
+
+    <footer class="footer">
+      <p>このページは自動的に更新されます</p>
+    </footer>
+  </main>
+
+  <script src="/js/patient.js"></script>
+</body>
+</html>

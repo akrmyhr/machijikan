@@ -1,0 +1,13 @@
+{
+  "name": "machijikan",
+  "version": "1.0.0",
+  "description": "宮平医院 待ち人数表示システム",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

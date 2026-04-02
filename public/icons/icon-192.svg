@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" fill="none">
+  <rect width="192" height="192" rx="32" fill="#0f1d36"/>
+  <rect x="8" y="8" width="176" height="176" rx="28" fill="url(#bg)"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="192" y2="192">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="100%" stop-color="#1a2a4a"/>
+    </linearGradient>
+  </defs>
+  <!-- Cross icon -->
+  <rect x="80" y="48" width="32" height="96" rx="6" fill="#4da6ff" opacity="0.9"/>
+  <rect x="48" y="80" width="96" height="32" rx="6" fill="#4da6ff" opacity="0.9"/>
+  <!-- Glow -->
+  <rect x="80" y="48" width="32" height="96" rx="6" fill="url(#glow)" opacity="0.4"/>
+  <rect x="48" y="80" width="96" height="32" rx="6" fill="url(#glow)" opacity="0.4"/>
+  <defs>
+    <linearGradient id="glow" x1="48" y1="48" x2="144" y2="144">
+      <stop offset="0%" stop-color="#4da6ff"/>
+      <stop offset="100%" stop-color="#36d6b5"/>
+    </linearGradient>
+  </defs>
+</svg>

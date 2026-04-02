@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>スタッフ管理 | 宮平医院</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/staff.css">
+</head>
+<body>
+
+  <!-- パスワード入力画面 -->
+  <div class="auth-overlay" id="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-icon">🔒</div>
+      <h2>スタッフ専用</h2>
+      <p>パスワードを入力してください</p>
+      <form id="auth-form">
+        <input type="password" id="password-input" class="auth-input" placeholder="パスワード" autocomplete="current-password" required>
+        <p class="auth-error" id="auth-error"></p>
+        <button type="submit" class="auth-button">ログイン</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- メイン管理画面 -->
+  <main class="container" id="main-container" style="display:none;">
+    <header class="staff-header">
+      <h1>宮平医院 <span class="header-sub">受付管理</span></h1>
+    </header>
+
+    <div class="current-count-card">
+      <p class="count-label">現在の待ち人数</p>
+      <div class="count-display">
+        <span class="count-number" id="count-number">-</span>
+        <span class="count-unit">名</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="button-row">
+        <button class="ctrl-btn ctrl-btn-minus" id="btn-minus" title="1名減らす">
+          <span class="ctrl-btn-icon">−</span>
+          <span class="ctrl-btn-label">1名減</span>
+        </button>
+        <button class="ctrl-btn ctrl-btn-plus" id="btn-plus" title="1名追加">
+          <span class="ctrl-btn-icon">＋</span>
+          <span class="ctrl-btn-label">1名追加</span>
+        </button>
+      </div>
+
+      <div class="direct-input-row">
+        <label for="direct-count" class="direct-label">直接入力:</label>
+        <input type="number" id="direct-count" class="direct-input" min="0" max="999" value="0">
+        <button class="direct-btn" id="btn-set">設定</button>
+      </div>
+
+      <button class="reset-btn" id="btn-reset">リセット（0名に戻す）</button>
+    </div>
+
+    <div class="qr-section" id="qr-section">
+      <button class="qr-toggle-btn" id="btn-qr-toggle">📱 患者用QRコードを表示</button>
+      <div class="qr-panel hidden" id="qr-panel">
+        <p class="qr-label">患者ページのURL：</p>
+        <p class="qr-url" id="qr-url"></p>
+        <canvas id="qr-canvas" class="qr-canvas"></canvas>
+        <p class="qr-hint">このQRコードを待合室に掲示してください</p>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-dot" id="status-dot"></div>
+      <span class="status-text" id="status-text">接続中...</span>
+      <span class="last-updated" id="last-updated"></span>
+    </div>
+  </main>
+
+  <script src="/js/staff.js"></script>
+</body>
+</html>
