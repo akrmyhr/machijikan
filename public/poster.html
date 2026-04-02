@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ポスター印刷 | 宮平医院</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --color-primary: #1a5276;
+      --color-accent: #2e86c1;
+      --color-bg: #f8fbff;
+      --color-text: #1a1a2e;
+      --color-text-muted: #5a6a7a;
+      --font: 'Noto Sans JP', sans-serif;
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .poster {
+      width: 210mm;
+      min-height: 297mm;
+      background: var(--color-bg);
+      padding: 20mm 18mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    /* 上部のデコレーションバー */
+    .poster::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 12mm;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    }
+
+    /* 下部のデコレーションバー */
+    .poster::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 6mm;
+      background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+    }
+
+    .poster-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-top: 8mm;
+    }
+
+    /* 医院ロゴ */
+    .clinic-icon {
+      width: 18mm;
+      height: 18mm;
+      color: var(--color-primary);
+      margin-bottom: 4mm;
+    }
+
+    .clinic-name {
+      font-size: 14mm;
+      font-weight: 900;
+      color: var(--color-primary);
+      letter-spacing: 0.1em;
+      margin-bottom: 8mm;
+    }
+
+    /* メインタイトル */
+    .poster-title {
+      font-size: 12mm;
+      font-weight: 900;
+      color: var(--color-text);
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: 6mm;
+    }
+
+    .poster-title .highlight {
+      color: var(--color-accent);
+    }
+
+    .poster-subtitle {
+      font-size: 5.5mm;
+      color: var(--color-text-muted);
+      text-align: center;
+      margin-bottom: 10mm;
+      line-height: 1.6;
+    }
+
+    /* 区切り線 */
+    .divider {
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--color-accent), transparent);
+      margin: 4mm 0;
+    }
+
+    /* 手順ステップ */
+    .steps {
+      width: 100%;
+      margin: 6mm 0 8mm;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 5mm;
+      padding: 4mm 6mm;
+      margin-bottom: 3mm;
+      background: #eef5fc;
+      border-radius: 4mm;
+      border-left: 3px solid var(--color-accent);
+    }
+
+    .step-number {
+      width: 12mm;
+      height: 12mm;
+      border-radius: 50%;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 7mm;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      font-size: 5.5mm;
+      font-weight: 700;
+      color: var(--color-text);
+      line-height: 1.4;
+    }
+
+    .step-text small {
+      font-weight: 400;
+      color: var(--color-text-muted);
+      font-size: 4mm;
+      display: block;
+      margin-top: 1mm;
+    }
+
+    /* QRコードセクション */
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 6mm 0;
+    }
+
+    .qr-label {
+      font-size: 5mm;
+      color: var(--color-text-muted);
+      margin-bottom: 4mm;
+      font-weight: 700;
+    }
+
+    .qr-frame {
+      padding: 5mm;
+      border: 2px solid var(--color-accent);
+      border-radius: 5mm;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-frame img {
+      width: 50mm;
+      height: 50mm;
+      display: block;
+    }
+
+    .url-text {
+      margin-top: 4mm;
+      font-size: 4.5mm;
+      color: var(--color-accent);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    /* 注意事項 */
+    .note {
+      margin-top: 8mm;
+      padding: 4mm 6mm;
+      background: #fef9e7;
+      border-radius: 3mm;
+      border: 1px solid #f0d060;
+      width: 100%;
+    }
+
+    .note p {
+      font-size: 3.8mm;
+      color: #7d6608;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    /* 印刷時の設定 */
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+
+      .poster {
+        box-shadow: none;
+        width: 100%;
+        min-height: 100vh;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* 印刷ボタン（画面表示時のみ） */
+    .print-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-primary);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .print-bar p {
+      font-size: 14px;
+    }
+
+    .print-btn {
+      padding: 8px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: var(--font);
+      background: #fff;
+      color: var(--color-primary);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .print-btn:hover {
+      background: #e0ecf5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="print-bar no-print">
+    <p>A4サイズで印刷できます</p>
+    <button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+  </div>
+
+  <div class="poster">
+    <div class="poster-content">
+
+      <!-- 医院名 -->
+      <svg class="clinic-icon" viewBox="0 0 48 48" fill="none">
+        <rect x="4" y="14" width="40" height="30" rx="4" fill="rgba(26,82,118,0.1)" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M14 14V8a10 10 0 0 1 20 0v6" stroke="currentColor" stroke-width="2.5" fill="none"/>
+        <line x1="24" y1="22" x2="24" y2="36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="17" y1="29" x2="31" y2="29" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <h1 class="clinic-name">宮平医院</h1>
+
+      <!-- タイトル -->
+      <h2 class="poster-title">
+        待ち人数を<br>
+        <span class="highlight">スマホで確認</span>できます
+      </h2>
+
+      <p class="poster-subtitle">
+        QRコードを読み取るだけで<br>
+        現在の待ち人数をリアルタイムで確認できます
+      </p>
+
+      <div class="divider"></div>
+
+      <!-- 手順 -->
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-text">
+            下の QRコードをスマホのカメラで読み取る
+            <small>またはURLを直接入力</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-text">
+            表示されたページで待ち人数を確認
+            <small>ページは自動で更新されます</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- QRコード -->
+      <div class="qr-section">
+        <p class="qr-label">▼ こちらのQRコードを読み取ってください ▼</p>
+        <div class="qr-frame">
+          <img id="qr-image" alt="QRコード" src="">
+        </div>
+        <p class="url-text" id="url-text"></p>
+      </div>
+
+      <!-- 注意 -->
+      <div class="note">
+        <p>※ 通信料はご自身の負担となります ／ Wi-Fiもご利用いただけます</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // 患者ページのURLとQRコードを自動設定
+    const baseUrl = window.location.origin + '/';
+    const urlText = document.getElementById('url-text');
+    const qrImage = document.getElementById('qr-image');
+
+    urlText.textContent = baseUrl;
+    qrImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(baseUrl);
+  </script>
+</body>
+</html>
