@@ -135,6 +135,14 @@
   });
 
   // --- ボタンイベント ---
+  // タッチ操作でのズーム防止
+  [btnPlus, btnMinus, btnSet, btnReset].forEach(function (btn) {
+    btn.addEventListener('touchend', function (e) {
+      e.preventDefault();
+      btn.click();
+    });
+  });
+
   btnPlus.addEventListener('click', () => apiUpdate({ delta: 1 }));
   btnMinus.addEventListener('click', () => apiUpdate({ delta: -1 }));
 
