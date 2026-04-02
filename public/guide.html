@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>スタッフガイド | 宮平医院 待ち人数システム</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font: 'Noto Sans JP', sans-serif;
+      --primary: #1a5276;
+      --accent: #2e86c1;
+      --bg: #f8fbff;
+      --text: #1a1a2e;
+      --muted: #5a6a7a;
+      --surface: #fff;
+      --border: #e0e8f0;
+    }
+
+    @page { size: A4; margin: 15mm; }
+
+    body {
+      font-family: var(--font);
+      background: #eee;
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    .page {
+      max-width: 800px;
+      margin: 1rem auto;
+      background: var(--surface);
+      padding: 40px 48px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.15rem;
+      color: var(--primary);
+      margin: 2rem 0 0.8rem;
+      padding-left: 0.6rem;
+      border-left: 4px solid var(--accent);
+    }
+
+    h3 {
+      font-size: 1rem;
+      color: var(--accent);
+      margin: 1.2rem 0 0.5rem;
+    }
+
+    p, li { font-size: 0.95rem; color: var(--text); }
+
+    ul, ol {
+      padding-left: 1.5rem;
+      margin: 0.5rem 0;
+    }
+
+    li { margin-bottom: 0.4rem; }
+
+    .url-box {
+      background: #eef5fc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      margin: 0.8rem 0;
+      word-break: break-all;
+    }
+
+    .url-box .label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .url-box .url {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .step-box {
+      background: #f4f8fc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 0.8rem 0;
+    }
+
+    .step-box .step-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+    }
+
+    .warning-box {
+      background: #fef9e7;
+      border: 1px solid #f0d060;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 1rem 0;
+    }
+
+    .warning-box .warning-title {
+      font-weight: 700;
+      color: #7d6608;
+      margin-bottom: 0.3rem;
+    }
+
+    .warning-box p { color: #7d6608; font-size: 0.9rem; }
+
+    .info-box {
+      background: #e8f4fd;
+      border: 1px solid #b3d9f2;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 1rem 0;
+    }
+
+    .info-box p { color: #1a5276; font-size: 0.9rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.8rem 0;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) { background: #f8fbff; }
+
+    .footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .print-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    .print-btn {
+      padding: 6px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: var(--font);
+      background: #fff;
+      color: var(--primary);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media print {
+      body { background: none; }
+      .page { box-shadow: none; padding: 0; margin: 0; max-width: none; }
+      .no-print { display: none !important; }
+      h2 { page-break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="print-bar no-print">
+  <span>スタッフガイド</span>
+  <button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+</div>
+
+<div class="page">
+
+  <h1>宮平医院 待ち人数管理システム<br>スタッフ操作ガイド</h1>
+
+  <!-- ===== アクセス情報 ===== -->
+  <h2>1. アクセス情報</h2>
+
+  <div class="url-box">
+    <span class="label">スタッフ管理ページ</span>
+    <span class="url">https://miyahira-iin.onrender.com/staff.html</span>
+  </div>
+
+  <div class="url-box">
+    <span class="label">患者表示ページ（見るだけ）</span>
+    <span class="url">https://miyahira-iin.onrender.com/</span>
+  </div>
+
+  <div class="url-box">
+    <span class="label">ポスター印刷ページ</span>
+    <span class="url">https://miyahira-iin.onrender.com/poster.html</span>
+  </div>
+
+  <table>
+    <tr><th>項目</th><th>内容</th></tr>
+    <tr><td>パスワード</td><td><strong>miyahira2026</strong></td></tr>
+    <tr><td>ログイン保持</td><td>一度ログインすると <strong>3時間</strong> は再ログイン不要</td></tr>
+  </table>
+
+  <!-- ===== 基本操作 ===== -->
+  <h2>2. 基本操作</h2>
+
+  <div class="step-box">
+    <div class="step-title">① ログインする</div>
+    <p>スタッフ管理ページを開き、パスワードを入力して「ログイン」をタップします。</p>
+    <p>3時間以内であればブラウザを閉じても再ログインは不要です。</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">② 待ち人数を増やす（患者来院時）</div>
+    <p><strong>「＋ 1名追加」</strong> ボタンをタップします。</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">③ 待ち人数を減らす（診察開始時）</div>
+    <p><strong>「− 1名減」</strong> ボタンをタップします。</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">④ 待ち人数を直接設定する</div>
+    <p>「直接入力」欄に数字を入力し、<strong>「設定」</strong> をタップします。</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">⑤ リセットする（終業時）</div>
+    <p><strong>「リセット（0名に戻す）」</strong> をタップ → 確認ダイアログで「OK」を選択します。</p>
+  </div>
+
+  <!-- ===== 運用の流れ ===== -->
+  <h2>3. 1日の運用フロー</h2>
+
+  <table>
+    <tr><th>タイミング</th><th>操作</th></tr>
+    <tr><td>始業時</td><td>スタッフページにアクセス → ログイン</td></tr>
+    <tr><td>患者来院時</td><td>「＋ 1名追加」をタップ</td></tr>
+    <tr><td>診察開始時</td><td>「− 1名減」をタップ</td></tr>
+    <tr><td>人数がずれた時</td><td>「直接入力」で正しい人数を設定</td></tr>
+    <tr><td>終業時</td><td>「リセット（0名に戻す）」をタップ</td></tr>
+  </table>
+
+  <!-- ===== QRコード ===== -->
+  <h2>4. QRコードの表示・印刷</h2>
+
+  <ol>
+    <li>スタッフ管理ページの下部にある <strong>「📱 患者用QRコードを表示」</strong> をタップ</li>
+    <li>QRコードが表示されます</li>
+    <li>または <strong>ポスター印刷ページ</strong> からA4サイズのポスターを印刷し、待合室に掲示してください</li>
+  </ol>
+
+  <!-- ===== よくある質問 ===== -->
+  <h2>5. よくある質問</h2>
+
+  <h3>Q. 患者さん側の画面は自動更新されますか？</h3>
+  <p>はい。スタッフが人数を変更すると、<strong>自動的にリアルタイムで反映</strong>されます。患者さんがページをリロードする必要はありません。</p>
+
+  <h3>Q. 複数の端末から同時に操作できますか？</h3>
+  <p>はい。複数のタブレットやPCからログインして操作できます。どの端末からの変更もすべての画面に即座に反映されます。</p>
+
+  <h3>Q. パスワードを忘れた場合は？</h3>
+  <p>管理者に連絡してください。パスワードはサーバー側で設定されています。</p>
+
+  <h3>Q. ページが「再接続中...」と表示される場合は？</h3>
+  <p>インターネット接続を確認してください。接続が回復すると自動的に再接続されます。</p>
+
+  <div class="warning-box">
+    <div class="warning-title">⚠️ 注意事項</div>
+    <p>・スタッフ管理ページのURLやパスワードを患者さんに共有しないでください</p>
+    <p>・患者さんには患者ページのURL（またはQRコード）のみを共有してください</p>
+  </div>
+
+  <div class="info-box">
+    <p>💡 タブレットのホーム画面にブックマークを追加すると、次回からワンタップでアクセスできます。</p>
+  </div>
+
+  <div class="footer">
+    宮平医院 待ち人数管理システム — スタッフ操作ガイド
+  </div>
+
+</div>
+
+</body>
+</html>
