@@ -23,6 +23,28 @@
   let password = '';
   let currentCount = 0;
   let eventSource = null;
+  const SESSION_DURATION = 3 * 60 * 60 * 1000; // 3時間
+
+  // --- セッション管理 ---
+  function saveSession(pw) {
+    localStorage.setItem('staff_pw', pw);
+    localStorage.setItem('staff_expires', Date.now() + SESSION_DURATION);
+  }
+
+  function loadSession() {
+    const pw = localStorage.getItem('staff_pw');
+    const expires = parseInt(localStorage.getItem('staff_expires'), 10);
+    if (pw && expires && Date.now() < expires) {
+      return pw;
+    }
+    clearSession();
+    return null;
+  }
+
+  function clearSession() {
+    localStorage.removeItem('staff_pw');
+    localStorage.removeItem('staff_expires');
+  }
 
   // --- 時刻フォーマット ---
   function formatTime(isoString) {
@@ -121,6 +143,7 @@
 
       if (res.ok) {
         password = pw;
+        saveSession(pw);
         authOverlay.classList.add('hidden');
         mainContainer.style.display = 'block';
         connectSSE();
@@ -167,8 +190,30 @@
     }
   });
 
-  // --- 初期フォーカス ---
-  passwordInput.focus();
+  // --- 自動ログイン試行 ---
+  var savedPw = loadSession();
+  if (savedPw) {
+    // 保存済みパスワードで自動認証
+    fetch('/api/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: savedPw, delta: 0 })
+    }).then(function (res) {
+      if (res.ok) {
+        password = savedPw;
+        authOverlay.classList.add('hidden');
+        mainContainer.style.display = 'block';
+        connectSSE();
+      } else {
+        clearSession();
+        passwordInput.focus();
+      }
+    }).catch(function () {
+      passwordInput.focus();
+    });
+  } else {
+    passwordInput.focus();
+  }
 
   // --- QRコード機能 ---
   const btnQrToggle = document.getElementById('btn-qr-toggle');
