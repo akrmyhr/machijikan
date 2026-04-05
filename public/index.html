@@ -38,7 +38,13 @@
       <h1 class="clinic-name">宮平医院</h1>
     </header>
 
-    <div class="card">
+    <!-- 診療中: 待ち人数カード -->
+    <div class="card" id="card-open">
+      <div class="clinic-status-badge" id="clinic-badge">
+        <span class="badge-dot"></span>
+        <span>現在は診療中です</span>
+      </div>
+
       <p class="card-label">ただいまの待ち人数</p>
 
       <div class="count-display" id="count-display">
@@ -52,6 +58,13 @@
       </div>
 
       <p class="last-updated" id="last-updated"></p>
+    </div>
+
+    <!-- 受付終了: 閉院カード -->
+    <div class="card card-closed hidden" id="card-closed">
+      <div class="closed-icon">🏥</div>
+      <h2 class="closed-title">本日の受付は<br>終了いたしました</h2>
+      <p class="closed-sub">ご来院ありがとうございました。<br>またのお越しをお待ちしております。</p>
     </div>
 
     <div class="message-area" id="message-area">

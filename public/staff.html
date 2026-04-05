@@ -31,33 +31,49 @@
       <h1>宮平医院 <span class="header-sub">受付管理</span></h1>
     </header>
 
-    <div class="current-count-card">
-      <p class="count-label">現在の待ち人数</p>
-      <div class="count-display">
-        <span class="count-number" id="count-number">-</span>
-        <span class="count-unit">名</span>
+    <!-- ステータス切り替え -->
+    <div class="status-toggle" id="status-toggle">
+      <button class="toggle-btn toggle-btn-open active" id="btn-open" type="button">
+        <span class="toggle-icon">🟢</span>
+        <span class="toggle-label">診療中</span>
+      </button>
+      <button class="toggle-btn toggle-btn-closed" id="btn-closed" type="button">
+        <span class="toggle-icon">🔴</span>
+        <span class="toggle-label">受付終了</span>
+      </button>
+    </div>
+
+    <!-- 操作パネル（診療中のみ表示） -->
+    <div class="controls-panel" id="controls-panel">
+      <div class="current-count-card">
+        <p class="count-label">現在の待ち人数</p>
+        <div class="count-display">
+          <span class="count-number" id="count-number">-</span>
+          <span class="count-unit">名</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="button-row">
+          <button class="ctrl-btn ctrl-btn-minus" id="btn-minus" title="1名減らす">
+            <span class="ctrl-btn-icon">−</span>
+            <span class="ctrl-btn-label">1名減</span>
+          </button>
+          <button class="ctrl-btn ctrl-btn-plus" id="btn-plus" title="1名追加">
+            <span class="ctrl-btn-icon">＋</span>
+            <span class="ctrl-btn-label">1名追加</span>
+          </button>
+        </div>
+
+        <button class="reset-btn" id="btn-reset">リセット（0名に戻す）</button>
       </div>
     </div>
 
-    <div class="controls">
-      <div class="button-row">
-        <button class="ctrl-btn ctrl-btn-minus" id="btn-minus" title="1名減らす">
-          <span class="ctrl-btn-icon">−</span>
-          <span class="ctrl-btn-label">1名減</span>
-        </button>
-        <button class="ctrl-btn ctrl-btn-plus" id="btn-plus" title="1名追加">
-          <span class="ctrl-btn-icon">＋</span>
-          <span class="ctrl-btn-label">1名追加</span>
-        </button>
-      </div>
-
-      <div class="direct-input-row">
-        <label for="direct-count" class="direct-label">直接入力:</label>
-        <input type="number" id="direct-count" class="direct-input" min="0" max="999" value="0">
-        <button class="direct-btn" id="btn-set">設定</button>
-      </div>
-
-      <button class="reset-btn" id="btn-reset">リセット（0名に戻す）</button>
+    <!-- 受付終了中のメッセージ -->
+    <div class="closed-panel hidden" id="closed-panel">
+      <div class="closed-panel-icon">🏥</div>
+      <p class="closed-panel-text">受付終了中</p>
+      <p class="closed-panel-sub">患者ページには終了案内が表示されています</p>
     </div>
 
     <div class="qr-section" id="qr-section">

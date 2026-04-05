@@ -9,6 +9,7 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 
 // --- データ管理 ---
 let waitCount = 0;
+let clinicStatus = 'closed'; // 'open' | 'closed'
 let lastUpdated = new Date().toISOString();
 
 function loadData() {
@@ -17,6 +18,7 @@ function loadData() {
       const raw = fs.readFileSync(DATA_FILE, 'utf-8');
       const data = JSON.parse(raw);
       waitCount = data.count || 0;
+      clinicStatus = data.clinicStatus || 'closed';
       lastUpdated = data.lastUpdated || new Date().toISOString();
     }
   } catch (e) {
@@ -26,7 +28,11 @@ function loadData() {
 
 function saveData() {
   try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify({ count: waitCount, lastUpdated }, null, 2), 'utf-8');
+    fs.writeFileSync(DATA_FILE, JSON.stringify({
+      count: waitCount,
+      clinicStatus,
+      lastUpdated
+    }, null, 2), 'utf-8');
   } catch (e) {
     console.error('データファイル保存エラー:', e.message);
   }
@@ -41,8 +47,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 // --- SSE クライアント管理 ---
 const sseClients = new Set();
 
+function getPayload() {
+  return { count: waitCount, clinicStatus, lastUpdated };
+}
+
 function broadcastSSE() {
-  const data = JSON.stringify({ count: waitCount, lastUpdated });
+  const data = JSON.stringify(getPayload());
   for (const res of sseClients) {
     res.write(`data: ${data}\n\n`);
   }
@@ -52,7 +62,7 @@ function broadcastSSE() {
 
 // 現在のステータス取得
 app.get('/api/status', (req, res) => {
-  res.json({ count: waitCount, lastUpdated });
+  res.json(getPayload());
 });
 
 // SSE 接続
@@ -65,7 +75,7 @@ app.get('/api/events', (req, res) => {
   });
 
   // 初回データ送信
-  res.write(`data: ${JSON.stringify({ count: waitCount, lastUpdated })}\n\n`);
+  res.write(`data: ${JSON.stringify(getPayload())}\n\n`);
 
   sseClients.add(res);
 
@@ -94,12 +104,38 @@ app.post('/api/update', (req, res) => {
   saveData();
   broadcastSSE();
 
-  res.json({ count: waitCount, lastUpdated });
+  res.json(getPayload());
+});
+
+// 診療ステータス変更（スタッフ用）
+app.post('/api/clinic-status', (req, res) => {
+  const { password, status } = req.body;
+
+  if (password !== STAFF_PASSWORD) {
+    return res.status(401).json({ error: 'パスワードが正しくありません' });
+  }
+
+  if (status !== 'open' && status !== 'closed') {
+    return res.status(400).json({ error: '無効なステータスです' });
+  }
+
+  clinicStatus = status;
+
+  // 受付終了時は待ち人数を0にリセット
+  if (status === 'closed') {
+    waitCount = 0;
+  }
+
+  lastUpdated = new Date().toISOString();
+  saveData();
+  broadcastSSE();
+
+  res.json(getPayload());
 });
 
 // ヘルスチェック（Render用）
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', count: waitCount });
+  res.json({ status: 'ok', count: waitCount, clinicStatus });
 });
 
 // --- サーバー起動 ---

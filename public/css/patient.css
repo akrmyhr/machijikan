@@ -248,6 +248,62 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* --- 非表示 --- */
+.hidden {
+  display: none !important;
+}
+
+/* --- 診療中バッジ --- */
+.clinic-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #34d399;
+  margin-bottom: 1.5rem;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* --- 閉院カード --- */
+.card-closed {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.closed-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  animation: fade-in 0.6s ease;
+}
+
+.closed-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--color-text);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  animation: fade-in 0.6s ease 0.1s both;
+}
+
+.closed-sub {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+  animation: fade-in 0.6s ease 0.2s both;
+}
+
 /* --- フッター --- */
 .footer {
   margin-top: 3rem;
