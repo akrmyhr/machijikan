@@ -79,10 +79,53 @@
     }
   }
 
+  // --- 通知音（Web Audio API） ---
+  var audioCtx = null;
+
+  function playChime() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      var now = audioCtx.currentTime;
+
+      // 音1: C5 (523Hz)
+      var osc1 = audioCtx.createOscillator();
+      var gain1 = audioCtx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.value = 523;
+      gain1.gain.setValueAtTime(0, now);
+      gain1.gain.linearRampToValueAtTime(0.15, now + 0.05);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+      osc1.connect(gain1);
+      gain1.connect(audioCtx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.6);
+
+      // 音2: E5 (659Hz) — 少し遅れて
+      var osc2 = audioCtx.createOscillator();
+      var gain2 = audioCtx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.value = 659;
+      gain2.gain.setValueAtTime(0, now + 0.15);
+      gain2.gain.linearRampToValueAtTime(0.12, now + 0.2);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+      osc2.connect(gain2);
+      gain2.connect(audioCtx.destination);
+      osc2.start(now + 0.15);
+      osc2.stop(now + 0.8);
+    } catch (e) {
+      // Audio API未対応時は無視
+    }
+  }
+
   // --- 表示更新 ---
   function updateDisplay(data) {
     var newCount = data.count;
     if (currentCount !== newCount) {
+      // 0→1 の変化で通知音
+      if (currentCount === 0 && newCount >= 1) {
+        playChime();
+      }
       countEl.textContent = newCount;
       countEl.classList.add('bump');
       setTimeout(function () { countEl.classList.remove('bump'); }, 300);
