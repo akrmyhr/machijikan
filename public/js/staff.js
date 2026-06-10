@@ -23,9 +23,17 @@
   var controlsPanel = document.getElementById('controls-panel');
   var closedPanel = document.getElementById('closed-panel');
 
+  var announceInput = document.getElementById('announce-input');
+  var announceCounter = document.getElementById('announce-counter');
+  var announceStatus = document.getElementById('announce-status');
+  var btnAnnounceSave = document.getElementById('btn-announce-save');
+  var btnAnnounceClear = document.getElementById('btn-announce-clear');
+
   var password = '';
   var currentCount = 0;
   var currentClinicStatus = 'open';
+  var currentAnnouncement = '';
+  var announceInitialized = false;
   var eventSource = null;
   var SESSION_DURATION = 3 * 60 * 60 * 1000; // 3時間
 
@@ -137,6 +145,23 @@
     if (data.clinicStatus) {
       updateClinicStatusUI(data.clinicStatus);
     }
+
+    // 告知事項の同期
+    var newAnnouncement = data.announcement || '';
+    if (currentAnnouncement !== newAnnouncement || !announceInitialized) {
+      currentAnnouncement = newAnnouncement;
+      // 入力中（フォーカス中）は上書きしない
+      if (document.activeElement !== announceInput) {
+        announceInput.value = newAnnouncement;
+        updateAnnounceCounter();
+      }
+      announceInitialized = true;
+    }
+  }
+
+  // --- 告知欄の文字数カウンター ---
+  function updateAnnounceCounter() {
+    announceCounter.textContent = announceInput.value.length + ' / 200';
   }
 
   // --- API 呼び出し（人数） ---
@@ -194,6 +219,44 @@
       updateDisplay(data);
     } catch (err) {
       console.error('通信エラー:', err);
+    }
+  }
+
+  // --- API 呼び出し（告知事項） ---
+  async function apiSetAnnouncement(text) {
+    announceStatus.textContent = '';
+    btnAnnounceSave.disabled = true;
+    try {
+      var res = await fetch('/api/announcement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password, text: text })
+      });
+
+      var data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          password = '';
+          clearSession();
+          mainContainer.style.display = 'none';
+          authOverlay.classList.remove('hidden');
+          authError.textContent = 'セッションが切れました。再ログインしてください。';
+        }
+        announceStatus.textContent = data.error || '更新に失敗しました';
+        announceStatus.className = 'announce-status error';
+        return;
+      }
+
+      updateDisplay(data);
+      announceStatus.textContent = text ? '✓ お知らせを更新しました' : '✓ お知らせを消去しました';
+      announceStatus.className = 'announce-status success';
+      setTimeout(function () { announceStatus.textContent = ''; }, 3000);
+    } catch (err) {
+      announceStatus.textContent = '通信エラーが発生しました';
+      announceStatus.className = 'announce-status error';
+    } finally {
+      btnAnnounceSave.disabled = false;
     }
   }
 
@@ -295,6 +358,22 @@
       if (confirm('受付を終了しますか？\n（待ち人数は0にリセットされます）')) {
         apiSetClinicStatus('closed');
       }
+    }
+  });
+
+  // --- 告知事項 ---
+  announceInput.addEventListener('input', updateAnnounceCounter);
+
+  btnAnnounceSave.addEventListener('click', function () {
+    apiSetAnnouncement(announceInput.value);
+  });
+
+  btnAnnounceClear.addEventListener('click', function () {
+    if (!announceInput.value.trim() && !currentAnnouncement) return;
+    if (confirm('お知らせを消去しますか？')) {
+      announceInput.value = '';
+      updateAnnounceCounter();
+      apiSetAnnouncement('');
     }
   });
 
