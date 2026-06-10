@@ -20,8 +20,10 @@ if (!STAFF_PASSWORD) {
 }
 
 // --- データ管理 ---
+const ANNOUNCEMENT_MAX_LENGTH = 200;
 let waitCount = 0;
 let clinicStatus = 'closed'; // 'open' | 'closed'
+let announcement = '';       // 患者向けの告知メッセージ（空文字なら非表示）
 let lastUpdated = new Date().toISOString();
 
 function loadData() {
@@ -31,6 +33,7 @@ function loadData() {
       const data = JSON.parse(raw);
       waitCount = data.count || 0;
       clinicStatus = data.clinicStatus || 'closed';
+      announcement = typeof data.announcement === 'string' ? data.announcement : '';
       lastUpdated = data.lastUpdated || new Date().toISOString();
     }
   } catch (e) {
@@ -43,6 +46,7 @@ function saveData() {
     fs.writeFileSync(DATA_FILE, JSON.stringify({
       count: waitCount,
       clinicStatus,
+      announcement,
       lastUpdated
     }, null, 2), 'utf-8');
   } catch (e) {
@@ -60,7 +64,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const sseClients = new Set();
 
 function getPayload() {
-  return { count: waitCount, clinicStatus, lastUpdated };
+  return { count: waitCount, clinicStatus, announcement, lastUpdated };
 }
 
 function broadcastSSE() {
@@ -137,6 +141,28 @@ app.post('/api/clinic-status', (req, res) => {
   if (status === 'closed') {
     waitCount = 0;
   }
+
+  lastUpdated = new Date().toISOString();
+  saveData();
+  broadcastSSE();
+
+  res.json(getPayload());
+});
+
+// 告知メッセージ更新（スタッフ用）
+app.post('/api/announcement', (req, res) => {
+  const { password, text } = req.body;
+
+  if (password !== EFFECTIVE_PASSWORD) {
+    return res.status(401).json({ error: 'パスワードが正しくありません' });
+  }
+
+  if (typeof text !== 'string') {
+    return res.status(400).json({ error: '無効なリクエストです' });
+  }
+
+  // 前後の空白を除去し、最大文字数で切り詰める
+  announcement = text.trim().slice(0, ANNOUNCEMENT_MAX_LENGTH);
 
   lastUpdated = new Date().toISOString();
   saveData();

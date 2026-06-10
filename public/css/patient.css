@@ -34,7 +34,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
 }
 
@@ -107,6 +108,8 @@ body {
   width: 100%;
   max-width: 480px;
   padding: 2rem 1.5rem;
+  /* コンテンツが画面より高い場合でも上下が切れずにスクロールできるよう margin: auto を使う */
+  margin: auto;
 }
 
 /* --- ヘッダー --- */
@@ -302,6 +305,115 @@ body {
   color: var(--color-text-muted);
   line-height: 1.8;
   animation: fade-in 0.6s ease 0.2s both;
+}
+
+/* --- お知らせ（告知バナー） --- */
+.announcement {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  text-align: left;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  animation: fade-in 0.5s ease;
+}
+
+.announcement-icon {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+
+.announcement-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.6;
+  color: #fcd34d;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* --- 診療時間 --- */
+.schedule {
+  margin-top: 2.5rem;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: 20px;
+  padding: 1.5rem 1.25rem;
+}
+
+.schedule-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-text);
+  margin-bottom: 0.4rem;
+}
+
+.schedule-dept {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.schedule-table-wrap {
+  overflow-x: auto;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.schedule-table th,
+.schedule-table td {
+  padding: 0.5rem 0.2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.schedule-table thead th {
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.schedule-table tbody th {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  font-size: 0.78rem;
+  text-align: right;
+  padding-right: 0.6rem;
+}
+
+.schedule-table tbody td {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.schedule-table .off {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.schedule-table .th-sun { color: #f87171; }
+.schedule-table .th-thu { color: var(--color-text-muted); }
+
+.schedule-table tbody tr:last-child th,
+.schedule-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.schedule-note {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.9rem;
+  line-height: 1.6;
 }
 
 /* --- フッター --- */

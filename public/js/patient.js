@@ -10,9 +10,12 @@
   const cardOpen = document.getElementById('card-open');
   const cardClosed = document.getElementById('card-closed');
   const messageArea = document.getElementById('message-area');
+  const announcement = document.getElementById('announcement');
+  const announcementText = document.getElementById('announcement-text');
 
   let currentCount = null;
   let currentStatus = null;
+  let currentAnnouncement = null;
   let eventSource = null;
 
   // --- メッセージ ---
@@ -59,6 +62,19 @@
         currentCount = newCount;
       }
       messageText.textContent = getMessage(newCount);
+    }
+
+    // お知らせ（診療中・受付終了どちらでも表示）
+    var newAnnouncement = data.announcement || '';
+    if (currentAnnouncement !== newAnnouncement) {
+      currentAnnouncement = newAnnouncement;
+      if (newAnnouncement) {
+        announcementText.textContent = newAnnouncement;
+        announcement.classList.remove('hidden');
+      } else {
+        announcementText.textContent = '';
+        announcement.classList.add('hidden');
+      }
     }
 
     if (data.lastUpdated) {

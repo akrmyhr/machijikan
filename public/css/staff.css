@@ -434,6 +434,126 @@ body {
   background: var(--color-surface-2);
 }
 
+/* --- 告知事項セクション --- */
+.announce-section {
+  margin-top: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.announce-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.announce-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.announce-counter {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.announce-input {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  font-size: 1rem;
+  font-family: var(--font-family);
+  line-height: 1.5;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  color: var(--color-text);
+  outline: none;
+  resize: vertical;
+  min-height: 4.5rem;
+}
+
+.announce-input:focus {
+  border-color: var(--color-primary);
+}
+
+.announce-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.announce-buttons {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.announce-clear-btn {
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: var(--font-family);
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.announce-clear-btn:hover {
+  background: var(--color-surface-2);
+}
+
+.announce-clear-btn:active {
+  transform: scale(0.98);
+}
+
+.announce-save-btn {
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: var(--font-family);
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, opacity 0.2s;
+}
+
+.announce-save-btn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.announce-save-btn:active {
+  transform: scale(0.98);
+}
+
+.announce-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.announce-status {
+  font-size: 0.8rem;
+  min-height: 1.2rem;
+  margin-top: 0.6rem;
+  text-align: center;
+}
+
+.announce-status.success {
+  color: var(--color-success);
+}
+
+.announce-status.error {
+  color: var(--color-danger);
+}
+
 /* --- QRコードセクション --- */
 .qr-section {
   margin-top: 1rem;

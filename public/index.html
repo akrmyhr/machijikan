@@ -38,6 +38,12 @@
       <h1 class="clinic-name">宮平医院</h1>
     </header>
 
+    <!-- お知らせ（スタッフが入力した告知事項） -->
+    <div class="announcement hidden" id="announcement">
+      <span class="announcement-icon">📢</span>
+      <p class="announcement-text" id="announcement-text"></p>
+    </div>
+
     <!-- 診療中: 待ち人数カード -->
     <div class="card" id="card-open">
       <div class="clinic-status-badge" id="clinic-badge">
@@ -70,6 +76,51 @@
     <div class="message-area" id="message-area">
       <p class="message-text" id="message-text"></p>
     </div>
+
+    <!-- 診療時間 -->
+    <section class="schedule">
+      <h2 class="schedule-title">診療時間</h2>
+      <p class="schedule-dept">小児科 ・ 内科</p>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>月</th>
+              <th>火</th>
+              <th>水</th>
+              <th class="th-thu">木</th>
+              <th>金</th>
+              <th>土</th>
+              <th class="th-sun">日</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>10:00〜13:00</th>
+              <td>◎</td>
+              <td>◎</td>
+              <td>◎</td>
+              <td class="off">休</td>
+              <td>◎</td>
+              <td>◎</td>
+              <td class="off">休</td>
+            </tr>
+            <tr>
+              <th>17:00〜19:00</th>
+              <td>◎</td>
+              <td>◎</td>
+              <td>◎</td>
+              <td>◎</td>
+              <td>◎</td>
+              <td class="off">休</td>
+              <td class="off">休</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="schedule-note">休診日：木曜午前・土曜午後・日曜・祝日</p>
+    </section>
 
     <footer class="footer">
       <p>このページは自動的に更新されます</p>

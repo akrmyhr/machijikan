@@ -76,6 +76,21 @@
       <p class="closed-panel-sub">患者ページには終了案内が表示されています</p>
     </div>
 
+    <!-- 告知事項（患者ページに表示） -->
+    <div class="announce-section" id="announce-section">
+      <div class="announce-head">
+        <span class="announce-label">📢 患者さんへのお知らせ</span>
+        <span class="announce-counter" id="announce-counter">0 / 200</span>
+      </div>
+      <textarea id="announce-input" class="announce-input" rows="3" maxlength="200"
+        placeholder="例：本日は院長が不在のため、お薬の処方のみとなります。"></textarea>
+      <div class="announce-buttons">
+        <button class="announce-clear-btn" id="btn-announce-clear" type="button">クリア</button>
+        <button class="announce-save-btn" id="btn-announce-save" type="button">お知らせを更新</button>
+      </div>
+      <p class="announce-status" id="announce-status"></p>
+    </div>
+
     <div class="qr-section" id="qr-section">
       <button class="qr-toggle-btn" id="btn-qr-toggle">📱 患者用QRコードを表示</button>
       <div class="qr-panel hidden" id="qr-panel">
