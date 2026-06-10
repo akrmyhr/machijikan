@@ -1,11 +1,23 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const STAFF_PASSWORD = process.env.STAFF_PASSWORD || 'miyahira2024';
 const DATA_FILE = path.join(__dirname, 'data.json');
+
+// --- スタッフパスワード ---
+// パスワードは環境変数 STAFF_PASSWORD からのみ読み込む（ソースには直書きしない）。
+// 未設定の場合は推測不能なランダム値を使うため、スタッフログインは事実上できなくなる。
+// （患者ページは通常どおり動作する）
+const STAFF_PASSWORD = process.env.STAFF_PASSWORD;
+const EFFECTIVE_PASSWORD = STAFF_PASSWORD || crypto.randomBytes(32).toString('hex');
+
+if (!STAFF_PASSWORD) {
+  console.warn('⚠️  環境変数 STAFF_PASSWORD が設定されていません。');
+  console.warn('   スタッフページにログインできません。Render の環境変数に STAFF_PASSWORD を設定してください。');
+}
 
 // --- データ管理 ---
 let waitCount = 0;
@@ -88,7 +100,7 @@ app.get('/api/events', (req, res) => {
 app.post('/api/update', (req, res) => {
   const { password, count, delta } = req.body;
 
-  if (password !== STAFF_PASSWORD) {
+  if (password !== EFFECTIVE_PASSWORD) {
     return res.status(401).json({ error: 'パスワードが正しくありません' });
   }
 
@@ -111,7 +123,7 @@ app.post('/api/update', (req, res) => {
 app.post('/api/clinic-status', (req, res) => {
   const { password, status } = req.body;
 
-  if (password !== STAFF_PASSWORD) {
+  if (password !== EFFECTIVE_PASSWORD) {
     return res.status(401).json({ error: 'パスワードが正しくありません' });
   }
 
