@@ -416,6 +416,16 @@ body {
   line-height: 1.6;
 }
 
+.schedule-fever-note {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  text-align: left;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-card-border);
+  line-height: 1.7;
+}
+
 /* --- フッター --- */
 .footer {
   margin-top: 3rem;
