@@ -646,6 +646,74 @@ body {
   color: var(--brand-dark);
 }
 
+/* ---------- 料金表 ---------- */
+.price-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.price-table th,
+.price-table td {
+  padding: 0.7rem 0.3rem;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.price-table thead th {
+  background: var(--bg-subtle);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.price-table thead th:first-child,
+.price-table tbody th {
+  text-align: left;
+  padding-left: 0.4rem;
+}
+
+.price-table tbody th {
+  font-weight: 700;
+  white-space: normal;
+  line-height: 1.5;
+}
+
+.price-sub {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.price-table .pay {
+  font-weight: 700;
+  color: var(--brand-dark);
+  font-size: 1rem;
+  padding-right: 0.4rem;
+}
+
+.price-table tbody tr:last-child th,
+.price-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.free-badge {
+  display: inline-block;
+  background: var(--open-soft);
+  color: var(--open);
+  border-radius: 6px;
+  padding: 0.15rem 0.7rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
 /* ---------- 検診の一覧 ---------- */
 .checkup-list {
   list-style: none;
