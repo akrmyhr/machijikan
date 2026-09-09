@@ -634,6 +634,18 @@ body {
   font-weight: 700;
 }
 
+.card-intro {
+  font-size: 0.98rem;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-intro strong {
+  font-weight: 700;
+  color: var(--brand-dark);
+}
+
 /* ---------- 検診の一覧 ---------- */
 .checkup-list {
   list-style: none;
