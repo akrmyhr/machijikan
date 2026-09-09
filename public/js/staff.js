@@ -29,11 +29,35 @@
   var btnAnnounceSave = document.getElementById('btn-announce-save');
   var btnAnnounceClear = document.getElementById('btn-announce-clear');
 
+  // お知らせ管理
+  var newsForm = document.getElementById('news-form');
+  var newsFormHeading = document.getElementById('news-form-heading');
+  var newsTitleInput = document.getElementById('news-title');
+  var newsBodyInput = document.getElementById('news-body');
+  var newsBodyCounter = document.getElementById('news-body-counter');
+  var newsCategoryInput = document.getElementById('news-category');
+  var newsPinnedInput = document.getElementById('news-pinned');
+  var newsFormError = document.getElementById('news-form-error');
+  var newsAdminList = document.getElementById('news-admin-list');
+  var btnNewsNew = document.getElementById('btn-news-new');
+  var btnNewsCancel = document.getElementById('btn-news-cancel');
+  var btnNewsSave = document.getElementById('btn-news-save');
+
+  var CATEGORY_LABELS = {
+    news: 'お知らせ',
+    closure: '休診・診療時間',
+    vaccine: '予防接種',
+    checkup: '健診'
+  };
+
   var password = '';
   var currentCount = 0;
   var currentClinicStatus = 'open';
   var currentAnnouncement = '';
   var announceInitialized = false;
+  var newsPosts = [];
+  var currentNewsStamp = null;
+  var editingId = null; // null なら新規作成、文字列なら編集中の記事ID
   var eventSource = null;
   var SESSION_DURATION = 3 * 60 * 60 * 1000; // 3時間
 
@@ -157,6 +181,12 @@
       }
       announceInitialized = true;
     }
+
+    // 別の端末でお知らせが更新されていたら一覧を取り直す
+    if (data.newsUpdatedAt && currentNewsStamp && data.newsUpdatedAt !== currentNewsStamp) {
+      currentNewsStamp = data.newsUpdatedAt;
+      loadNews();
+    }
   }
 
   // --- 告知欄の文字数カウンター ---
@@ -177,11 +207,7 @@
 
       if (!res.ok) {
         if (res.status === 401) {
-          password = '';
-          clearSession();
-          mainContainer.style.display = 'none';
-          authOverlay.classList.remove('hidden');
-          authError.textContent = 'セッションが切れました。再ログインしてください。';
+          handleUnauthorized();
         }
         console.error('API エラー:', data.error);
         return;
@@ -206,11 +232,7 @@
 
       if (!res.ok) {
         if (res.status === 401) {
-          password = '';
-          clearSession();
-          mainContainer.style.display = 'none';
-          authOverlay.classList.remove('hidden');
-          authError.textContent = 'セッションが切れました。再ログインしてください。';
+          handleUnauthorized();
         }
         console.error('API エラー:', data.error);
         return;
@@ -237,11 +259,7 @@
 
       if (!res.ok) {
         if (res.status === 401) {
-          password = '';
-          clearSession();
-          mainContainer.style.display = 'none';
-          authOverlay.classList.remove('hidden');
-          authError.textContent = 'セッションが切れました。再ログインしてください。';
+          handleUnauthorized();
         }
         announceStatus.textContent = data.error || '更新に失敗しました';
         announceStatus.className = 'announce-status error';
@@ -294,6 +312,7 @@
     authOverlay.classList.add('hidden');
     mainContainer.style.display = 'block';
     connectSSE();
+    loadNews();
   }
 
   // --- 認証 ---
@@ -375,6 +394,238 @@
       updateAnnounceCounter();
       apiSetAnnouncement('');
     }
+  });
+
+  // ============================================================
+  //  お知らせ管理
+  // ============================================================
+
+  function formatDate(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+  }
+
+  function updateNewsBodyCounter() {
+    newsBodyCounter.textContent = newsBodyInput.value.length + ' / 2000';
+  }
+
+  // --- 一覧の描画（textContent で組み立て、入力文字がそのまま表示されるようにする） ---
+  function renderNewsAdminList() {
+    newsAdminList.textContent = '';
+
+    if (newsPosts.length === 0) {
+      var empty = document.createElement('p');
+      empty.className = 'admin-empty';
+      empty.textContent = 'まだお知らせがありません。「＋ 新規作成」から追加できます。';
+      newsAdminList.appendChild(empty);
+      return;
+    }
+
+    newsPosts.forEach(function (post) {
+      var item = document.createElement('div');
+      item.className = 'admin-item' + (post.pinned ? ' is-pinned' : '');
+
+      var meta = document.createElement('div');
+      meta.className = 'admin-item-meta';
+
+      var tag = document.createElement('span');
+      tag.className = 'admin-tag';
+      tag.textContent = CATEGORY_LABELS[post.category] || CATEGORY_LABELS.news;
+      meta.appendChild(tag);
+
+      if (post.pinned) {
+        var pin = document.createElement('span');
+        pin.className = 'admin-tag admin-tag-pin';
+        pin.textContent = '重要';
+        meta.appendChild(pin);
+      }
+
+      var date = document.createElement('span');
+      date.className = 'admin-date';
+      date.textContent = formatDate(post.createdAt);
+      meta.appendChild(date);
+
+      var title = document.createElement('p');
+      title.className = 'admin-item-title';
+      title.textContent = post.title;
+
+      var body = document.createElement('p');
+      body.className = 'admin-item-body';
+      body.textContent = post.body;
+
+      var actions = document.createElement('div');
+      actions.className = 'admin-item-actions';
+
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'item-btn item-btn-edit';
+      editBtn.textContent = '編集';
+      editBtn.addEventListener('click', function () { openNewsForm(post); });
+
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'item-btn item-btn-delete';
+      delBtn.textContent = '削除';
+      delBtn.addEventListener('click', function () { deleteNews(post); });
+
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+
+      item.appendChild(meta);
+      item.appendChild(title);
+      item.appendChild(body);
+      item.appendChild(actions);
+      newsAdminList.appendChild(item);
+    });
+  }
+
+  // --- フォームの開閉 ---
+  function openNewsForm(post) {
+    editingId = post ? post.id : null;
+    newsFormHeading.textContent = post ? 'お知らせを編集' : '新しいお知らせ';
+    newsTitleInput.value = post ? post.title : '';
+    newsBodyInput.value = post ? post.body : '';
+    newsCategoryInput.value = post ? post.category : 'news';
+    newsPinnedInput.checked = post ? post.pinned : false;
+    newsFormError.textContent = '';
+    updateNewsBodyCounter();
+
+    newsForm.classList.remove('hidden');
+    btnNewsNew.classList.add('hidden');
+    newsTitleInput.focus();
+  }
+
+  function closeNewsForm() {
+    editingId = null;
+    newsForm.classList.add('hidden');
+    btnNewsNew.classList.remove('hidden');
+    newsFormError.textContent = '';
+  }
+
+  // --- 取得 ---
+  function loadNews() {
+    fetch('/api/news')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        newsPosts = data.posts || [];
+        currentNewsStamp = data.newsUpdatedAt || null;
+        renderNewsAdminList();
+      })
+      .catch(function () {
+        newsAdminList.textContent = '';
+        var err = document.createElement('p');
+        err.className = 'admin-empty';
+        err.textContent = 'お知らせを読み込めませんでした。';
+        newsAdminList.appendChild(err);
+      });
+  }
+
+  // --- セッション切れの共通処理 ---
+  function handleUnauthorized() {
+    password = '';
+    clearSession();
+    mainContainer.style.display = 'none';
+    authOverlay.classList.remove('hidden');
+    authError.textContent = 'セッションが切れました。再ログインしてください。';
+  }
+
+  // --- 保存（新規作成 / 編集） ---
+  async function saveNews() {
+    var title = newsTitleInput.value.trim();
+    var body = newsBodyInput.value.trim();
+
+    if (!title) {
+      newsFormError.textContent = 'タイトルを入力してください';
+      newsTitleInput.focus();
+      return;
+    }
+    if (!body) {
+      newsFormError.textContent = '本文を入力してください';
+      newsBodyInput.focus();
+      return;
+    }
+
+    newsFormError.textContent = '';
+    btnNewsSave.disabled = true;
+
+    var isEdit = editingId !== null;
+    var url = isEdit ? '/api/news/' + encodeURIComponent(editingId) : '/api/news';
+
+    try {
+      var res = await fetch(url, {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: password,
+          title: title,
+          body: body,
+          category: newsCategoryInput.value,
+          pinned: newsPinnedInput.checked
+        })
+      });
+
+      var data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          handleUnauthorized();
+          return;
+        }
+        newsFormError.textContent = data.error || '保存に失敗しました';
+        return;
+      }
+
+      newsPosts = data.posts || [];
+      renderNewsAdminList();
+      closeNewsForm();
+    } catch (err) {
+      newsFormError.textContent = '通信エラーが発生しました';
+    } finally {
+      btnNewsSave.disabled = false;
+    }
+  }
+
+  // --- 削除 ---
+  async function deleteNews(post) {
+    if (!confirm('「' + post.title + '」を削除しますか？\nこの操作は元に戻せません。')) return;
+
+    try {
+      var res = await fetch('/api/news/' + encodeURIComponent(post.id), {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password })
+      });
+
+      var data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          handleUnauthorized();
+          return;
+        }
+        alert(data.error || '削除に失敗しました');
+        return;
+      }
+
+      // 削除した記事を編集中だった場合はフォームを閉じる
+      if (editingId === post.id) closeNewsForm();
+
+      newsPosts = data.posts || [];
+      renderNewsAdminList();
+    } catch (err) {
+      alert('通信エラーが発生しました');
+    }
+  }
+
+  // --- お知らせ管理のイベント ---
+  btnNewsNew.addEventListener('click', function () { openNewsForm(null); });
+  btnNewsCancel.addEventListener('click', closeNewsForm);
+  newsBodyInput.addEventListener('input', updateNewsBodyCounter);
+
+  newsForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    saveNews();
   });
 
   // --- 自動ログイン試行 ---

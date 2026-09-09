@@ -1,118 +1,140 @@
-// 宮平医院 — 患者ページ JS
+// 宮平医院 — トップページ（受付状況・お知らせ）
 (function () {
   'use strict';
 
-  const countEl = document.getElementById('count-number');
-  const statusDot = document.getElementById('status-dot');
-  const statusText = document.getElementById('status-text');
-  const lastUpdatedEl = document.getElementById('last-updated');
-  const messageText = document.getElementById('message-text');
-  const cardOpen = document.getElementById('card-open');
-  const cardClosed = document.getElementById('card-closed');
-  const messageArea = document.getElementById('message-area');
-  const announcement = document.getElementById('announcement');
-  const announcementText = document.getElementById('announcement-text');
+  var statusPill = document.getElementById('status-pill');
+  var waitOpen = document.getElementById('wait-open');
+  var waitClosed = document.getElementById('wait-closed');
+  var waitNumber = document.getElementById('wait-number');
+  var waitMessage = document.getElementById('wait-message');
+  var connDot = document.getElementById('conn-dot');
+  var connText = document.getElementById('conn-text');
+  var lastUpdatedEl = document.getElementById('last-updated');
+  var noticeBanner = document.getElementById('notice-banner');
+  var noticeText = document.getElementById('notice-text');
+  var newsHome = document.getElementById('news-home');
 
-  let currentCount = null;
-  let currentStatus = null;
-  let currentAnnouncement = null;
-  let eventSource = null;
+  var HOME_NEWS_LIMIT = 3;
 
-  // --- メッセージ ---
+  var currentCount = null;
+  var currentStatus = null;
+  var currentNotice = null;
+  var currentNewsStamp = null;
+  var eventSource = null;
+
+  // --- 待ち人数に応じた案内文 ---
   function getMessage(count) {
-    if (count === 0) return '現在お待ちの方はいません 🎉';
-    if (count <= 3) return 'まもなくお呼びできます';
+    if (count === 0) return 'お待ちの方はいません';
+    if (count <= 3) return 'まもなくご案内できます';
     if (count <= 7) return 'しばらくお待ちください';
-    return '大変混み合っております';
+    return '混み合っております';
   }
 
-  // --- 時刻フォーマット ---
-  function formatTime(isoString) {
-    const d = new Date(isoString);
-    const h = d.getHours().toString().padStart(2, '0');
-    const m = d.getMinutes().toString().padStart(2, '0');
-    return '最終更新: ' + h + ':' + m;
+  function formatTime(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    var h = String(d.getHours()).padStart(2, '0');
+    var m = String(d.getMinutes()).padStart(2, '0');
+    return '最終更新 ' + h + ':' + m;
   }
 
-  // --- 表示更新 ---
+  // --- 診療中／受付終了の切り替え ---
+  function applyStatus(status) {
+    if (status === 'open') {
+      statusPill.textContent = '診療中';
+      statusPill.className = 'status-pill is-open';
+      waitOpen.classList.remove('hidden');
+      waitClosed.classList.add('hidden');
+    } else {
+      statusPill.textContent = '受付時間外';
+      statusPill.className = 'status-pill is-closed';
+      waitOpen.classList.add('hidden');
+      waitClosed.classList.remove('hidden');
+    }
+  }
+
+  // --- 受付状況の反映 ---
   function updateDisplay(data) {
-    var newCount = data.count;
-    var newStatus = data.clinicStatus || 'open';
-
-    // ステータス切り替え
+    var newStatus = data.clinicStatus || 'closed';
     if (newStatus !== currentStatus) {
       currentStatus = newStatus;
-      if (newStatus === 'closed') {
-        cardOpen.classList.add('hidden');
-        cardClosed.classList.remove('hidden');
-        messageArea.classList.add('hidden');
-      } else {
-        cardOpen.classList.remove('hidden');
-        cardClosed.classList.add('hidden');
-        messageArea.classList.remove('hidden');
-      }
+      applyStatus(newStatus);
     }
 
-    // カウント更新（open時のみ）
     if (newStatus === 'open') {
+      var newCount = data.count;
       if (currentCount !== newCount) {
-        countEl.textContent = newCount;
-        countEl.classList.add('bump');
-        setTimeout(function () { countEl.classList.remove('bump'); }, 300);
+        waitNumber.textContent = newCount;
+        waitNumber.classList.add('bump');
+        setTimeout(function () { waitNumber.classList.remove('bump'); }, 250);
         currentCount = newCount;
       }
-      messageText.textContent = getMessage(newCount);
+      waitMessage.textContent = getMessage(newCount);
     }
 
-    // お知らせ（診療中・受付終了どちらでも表示）
-    var newAnnouncement = data.announcement || '';
-    if (currentAnnouncement !== newAnnouncement) {
-      currentAnnouncement = newAnnouncement;
-      if (newAnnouncement) {
-        announcementText.textContent = newAnnouncement;
-        announcement.classList.remove('hidden');
+    // 短い告知（診療中・受付終了どちらでも表示）
+    var newNotice = data.announcement || '';
+    if (currentNotice !== newNotice) {
+      currentNotice = newNotice;
+      if (newNotice) {
+        noticeText.textContent = newNotice;
+        noticeBanner.classList.remove('hidden');
       } else {
-        announcementText.textContent = '';
-        announcement.classList.add('hidden');
+        noticeText.textContent = '';
+        noticeBanner.classList.add('hidden');
       }
     }
 
     if (data.lastUpdated) {
       lastUpdatedEl.textContent = formatTime(data.lastUpdated);
     }
+
+    // お知らせが更新されていたら取り直す
+    if (data.newsUpdatedAt && data.newsUpdatedAt !== currentNewsStamp) {
+      currentNewsStamp = data.newsUpdatedAt;
+      loadNews();
+    }
+  }
+
+  // --- お知らせ（最新数件） ---
+  function loadNews() {
+    fetch('/api/news')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var posts = (data.posts || []).slice(0, HOME_NEWS_LIMIT);
+        window.NewsView.render(newsHome, posts, '現在お知らせはありません。');
+      })
+      .catch(function () {
+        window.NewsView.render(newsHome, [], 'お知らせを読み込めませんでした。');
+      });
   }
 
   // --- SSE 接続 ---
   function connectSSE() {
-    if (eventSource) {
-      eventSource.close();
-    }
+    if (eventSource) eventSource.close();
 
     eventSource = new EventSource('/api/events');
 
     eventSource.onopen = function () {
-      statusDot.className = 'status-dot connected';
-      statusText.textContent = 'リアルタイム接続中';
+      connDot.className = 'conn-dot connected';
+      connText.textContent = '自動で更新されます';
     };
 
     eventSource.onmessage = function (e) {
       try {
-        var data = JSON.parse(e.data);
-        updateDisplay(data);
+        updateDisplay(JSON.parse(e.data));
       } catch (err) {
         console.error('データ解析エラー:', err);
       }
     };
 
     eventSource.onerror = function () {
-      statusDot.className = 'status-dot disconnected';
-      statusText.textContent = '再接続中...';
+      connDot.className = 'conn-dot disconnected';
+      connText.textContent = '再接続しています…';
       eventSource.close();
-      // 3秒後に再接続
       setTimeout(connectSSE, 3000);
     };
   }
 
-  // --- 初期化 ---
   connectSSE();
 })();
