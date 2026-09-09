@@ -1,11 +1,11 @@
 {
-  "name": "宮平医院 待ち人数",
-  "short_name": "待ち人数",
-  "description": "宮平医院の待ち人数をリアルタイムで確認",
+  "name": "宮平医院",
+  "short_name": "宮平医院",
+  "description": "宮平医院（小児科・内科）の待ち人数・お知らせ",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a1628",
-  "theme_color": "#0a1628",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "orientation": "portrait",
   "icons": [
     {

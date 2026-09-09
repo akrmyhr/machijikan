@@ -91,6 +91,56 @@
       <p class="announce-status" id="announce-status"></p>
     </div>
 
+    <!-- お知らせ管理（ホームページに掲載される記事） -->
+    <section class="news-admin" id="news-admin">
+      <div class="admin-head">
+        <h2 class="admin-title">ホームページのお知らせ</h2>
+        <button class="btn-new" id="btn-news-new" type="button">＋ 新規作成</button>
+      </div>
+      <p class="admin-hint">ここで作成した内容が、ホームページの「お知らせ」に掲載されます。</p>
+
+      <form class="news-form hidden" id="news-form">
+        <p class="news-form-heading" id="news-form-heading">新しいお知らせ</p>
+
+        <div class="field">
+          <label class="field-label" for="news-title">タイトル <span class="req">必須</span></label>
+          <input type="text" id="news-title" class="field-input" maxlength="100"
+            placeholder="例：年末年始の休診について">
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="news-body">本文 <span class="req">必須</span></label>
+          <textarea id="news-body" class="field-input field-textarea" rows="5" maxlength="2000"
+            placeholder="患者さんにお伝えする内容を入力してください。"></textarea>
+          <span class="field-counter" id="news-body-counter">0 / 2000</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="news-category">分類</label>
+          <select id="news-category" class="field-input">
+            <option value="news">お知らせ</option>
+            <option value="closure">休診・診療時間</option>
+            <option value="vaccine">予防接種</option>
+            <option value="checkup">健診</option>
+          </select>
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" id="news-pinned">
+          <span>重要なお知らせとして一番上に固定する</span>
+        </label>
+
+        <p class="news-form-error" id="news-form-error"></p>
+
+        <div class="form-buttons">
+          <button type="button" class="btn-cancel" id="btn-news-cancel">キャンセル</button>
+          <button type="submit" class="btn-save" id="btn-news-save">保存する</button>
+        </div>
+      </form>
+
+      <div id="news-admin-list"></div>
+    </section>
+
     <div class="qr-section" id="qr-section">
       <button class="qr-toggle-btn" id="btn-qr-toggle">📱 患者用QRコードを表示</button>
       <div class="qr-panel hidden" id="qr-panel">
@@ -108,6 +158,7 @@
     </div>
 
     <div class="footer-links">
+      <a href="/" class="footer-link" target="_blank" rel="noopener">🏠 ホーム</a>
       <a href="/guide.html" class="footer-link">📖 操作ガイド</a>
       <a href="/poster.html" class="footer-link">🖨️ ポスター印刷</a>
     </div>
