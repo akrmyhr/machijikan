@@ -674,6 +674,13 @@ body {
   background: var(--brand);
 }
 
+/* 検診リストの直後に詳細が続く場合の区切り */
+.checkup-list + .info-list {
+  margin-top: 0.9rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--border);
+}
+
 .hours-note a {
   color: var(--brand);
   font-weight: 700;
