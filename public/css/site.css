@@ -720,6 +720,18 @@ body {
   letter-spacing: 0;
 }
 
+.subhead {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.highlight {
+  font-weight: 700;
+  color: var(--brand-dark);
+  font-size: 1.05rem;
+}
+
 .prose p + p {
   margin-top: 0.85rem;
 }
