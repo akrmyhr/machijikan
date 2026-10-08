@@ -652,8 +652,11 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* 横幅いっぱいに広げると項目名と金額が離れて対応が読み取りにくくなるため、
+   広い画面では最大幅で止める（スマホでは 100% が効く） */
 .price-table {
   width: 100%;
+  max-width: 480px;
   border-collapse: collapse;
   font-size: 0.88rem;
 }
