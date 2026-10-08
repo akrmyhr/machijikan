@@ -110,7 +110,7 @@
     /* ---------- 見出し ---------- */
     .p-title {
       text-align: center;
-      margin-top: 6mm;
+      margin-top: 5mm;
     }
 
     .p-title-label {
@@ -142,13 +142,13 @@
 
     /* ---------- 休診ブロック ---------- */
     .p-block {
-      margin-top: 6mm;
+      margin-top: 5mm;
       border: 0.8mm solid var(--closed);
       border-radius: 3mm;
       overflow: hidden;
     }
 
-    .p-block.is-morning {
+    .p-block.is-partial {
       border-color: var(--accent);
     }
 
@@ -162,7 +162,7 @@
       padding: 3mm 0;
     }
 
-    .p-block.is-morning .p-block-head {
+    .p-block.is-partial .p-block-head {
       background: var(--accent);
     }
 
@@ -171,7 +171,7 @@
       background: var(--closed-soft);
     }
 
-    .p-block.is-morning .p-block-body {
+    .p-block.is-partial .p-block-body {
       background: var(--accent-soft);
     }
 
@@ -195,7 +195,7 @@
       letter-spacing: 0.02em;
     }
 
-    .p-block.is-morning .p-dates li {
+    .p-block.is-partial .p-dates li {
       color: var(--accent);
     }
 
@@ -212,9 +212,54 @@
       margin-top: 5mm;
     }
 
+    /* 一部休診（午前のみ／午後のみ）を2列で並べる */
+    .p-partial {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      list-style: none;
+    }
+
+    .p-partial li {
+      text-align: center;
+      padding: 0 3mm;
+    }
+
+    .p-partial li + li {
+      border-left: 0.4mm solid rgba(194, 112, 26, 0.35);
+    }
+
+    .p-partial-date {
+      display: block;
+      font-size: 13mm;
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    .p-partial-label {
+      display: block;
+      font-size: 6.5mm;
+      font-weight: 900;
+      color: #fff;
+      background: var(--accent);
+      border-radius: 1.5mm;
+      letter-spacing: 0.1em;
+      padding: 1mm 0;
+      margin-top: 2mm;
+    }
+
+    .p-partial-note {
+      display: block;
+      font-size: 4.2mm;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 2mm;
+    }
+
     /* ---------- お詫び ---------- */
     .p-apology {
-      margin-top: 6mm;
+      margin-top: 5mm;
       text-align: center;
       font-size: 4.8mm;
       line-height: 1.75;
@@ -373,13 +418,21 @@
       </div>
     </section>
 
-    <section class="p-block is-morning">
-      <p class="p-block-head">午 前 休 診</p>
+    <section class="p-block is-partial">
+      <p class="p-block-head">一 部 休 診</p>
       <div class="p-block-body">
-        <ul class="p-dates is-single">
-          <li>6<span class="p-dow">日（火）</span></li>
+        <ul class="p-partial">
+          <li>
+            <span class="p-partial-date">6<span class="p-dow">日（火）</span></span>
+            <span class="p-partial-label">午前休診</span>
+            <span class="p-partial-note">午後は通常どおり診療</span>
+          </li>
+          <li>
+            <span class="p-partial-date">19<span class="p-dow">日（月）</span></span>
+            <span class="p-partial-label">午後休診</span>
+            <span class="p-partial-note">午前は通常どおり診療</span>
+          </li>
         </ul>
-        <p class="p-block-note">午後（17:00〜19:00）は通常どおり診療いたします</p>
       </div>
     </section>
 
