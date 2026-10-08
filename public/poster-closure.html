@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>休診日ポスター | 宮平医院</title>
+  <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       休診日の掲示用ポスター（A4縦）
+       待合室に貼って離れた位置から読むため、日付を最大級に大きくしている。
+       配色はサイト共通スタイル（site.css）と同じ値を使っている。
+       ============================================================ */
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --brand: #0e7490;
+      --brand-dark: #0a5871;
+      --brand-soft: #e9f4f7;
+      --text: #16323f;
+      --text-muted: #5b7180;
+      --border: #dde5ea;
+      --closed: #a8443a;
+      --closed-soft: #fbefed;
+      --accent: #c2701a;
+      --accent-soft: #fdf4e8;
+      --font: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background: #e8ecef;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 8mm 4mm;
+    }
+
+    .poster {
+      width: 210mm;
+      min-height: 297mm;
+      background: #fff;
+      color: var(--text);
+      padding: 14mm 16mm 10mm;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* 上端のブランドバー */
+    .poster::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6mm;
+      background: var(--brand);
+    }
+
+    /* ---------- ヘッダー ---------- */
+    .p-header {
+      display: flex;
+      align-items: center;
+      gap: 4mm;
+      padding-bottom: 5mm;
+      margin-top: 3mm;
+      border-bottom: 0.6mm solid var(--border);
+    }
+
+    .p-mark {
+      width: 16mm;
+      height: 16mm;
+      flex-shrink: 0;
+      color: var(--brand);
+    }
+
+    .p-mark svg { width: 100%; height: 100%; display: block; }
+
+    .p-name {
+      font-size: 8mm;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      line-height: 1.2;
+    }
+
+    .p-dept {
+      font-size: 4.2mm;
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+    }
+
+    /* ---------- 見出し ---------- */
+    .p-title {
+      text-align: center;
+      margin-top: 5mm;
+    }
+
+    .p-title-label {
+      display: inline-block;
+      background: var(--closed);
+      color: #fff;
+      font-size: 5mm;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      padding: 1.6mm 7mm;
+      border-radius: 1.5mm;
+      margin-bottom: 5mm;
+    }
+
+    .p-title-main {
+      font-size: 14mm;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      line-height: 1.3;
+    }
+
+    .p-intro {
+      text-align: center;
+      font-size: 5.2mm;
+      line-height: 1.8;
+      color: var(--text);
+      margin-top: 5mm;
+    }
+
+    /* ---------- 休診ブロック ---------- */
+    .p-block {
+      margin-top: 5mm;
+      border: 0.8mm solid var(--closed);
+      border-radius: 3mm;
+      overflow: hidden;
+    }
+
+    .p-block.is-partial {
+      border-color: var(--accent);
+    }
+
+    .p-block-head {
+      background: var(--closed);
+      color: #fff;
+      font-size: 6.5mm;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-align: center;
+      padding: 3mm 0;
+    }
+
+    .p-block.is-partial .p-block-head {
+      background: var(--accent);
+    }
+
+    .p-block-body {
+      padding: 5mm 6mm;
+      background: var(--closed-soft);
+    }
+
+    .p-block.is-partial .p-block-body {
+      background: var(--accent-soft);
+    }
+
+    .p-dates {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4mm 4mm;
+      list-style: none;
+    }
+
+    .p-dates.is-single {
+      grid-template-columns: 1fr;
+    }
+
+    .p-dates li {
+      text-align: center;
+      font-size: 13mm;
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--closed);
+      letter-spacing: 0.02em;
+    }
+
+    .p-block.is-partial .p-dates li {
+      color: var(--accent);
+    }
+
+    .p-dates .p-dow {
+      font-size: 8mm;
+      font-weight: 700;
+    }
+
+    .p-block-note {
+      text-align: center;
+      font-size: 5mm;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 5mm;
+    }
+
+    /* 一部休診（午前のみ／午後のみ）を2列で並べる */
+    .p-partial {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      list-style: none;
+    }
+
+    .p-partial li {
+      text-align: center;
+      padding: 0 3mm;
+    }
+
+    .p-partial li + li {
+      border-left: 0.4mm solid rgba(194, 112, 26, 0.35);
+    }
+
+    .p-partial-date {
+      display: block;
+      font-size: 13mm;
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    .p-partial-label {
+      display: block;
+      font-size: 6.5mm;
+      font-weight: 900;
+      color: #fff;
+      background: var(--accent);
+      border-radius: 1.5mm;
+      letter-spacing: 0.1em;
+      padding: 1mm 0;
+      margin-top: 2mm;
+    }
+
+    .p-partial-note {
+      display: block;
+      font-size: 4.2mm;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 2mm;
+    }
+
+    /* ---------- お詫び ---------- */
+    .p-apology {
+      margin-top: 5mm;
+      text-align: center;
+      font-size: 4.8mm;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    /* ---------- フッター ---------- */
+    .p-footer {
+      margin-top: auto;
+      padding-top: 5mm;
+      border-top: 0.6mm solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 6mm;
+    }
+
+    .p-hours-title {
+      font-size: 3.8mm;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5mm;
+    }
+
+    .p-hours {
+      font-size: 4.6mm;
+      font-weight: 700;
+      line-height: 1.7;
+    }
+
+    .p-hours span {
+      font-weight: 400;
+      color: var(--text-muted);
+      font-size: 4mm;
+    }
+
+    .p-tel {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .p-tel-label {
+      font-size: 3.8mm;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .p-tel-number {
+      font-size: 8mm;
+      font-weight: 900;
+      color: var(--brand);
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+    }
+
+    /* ---------- 印刷ボタン（画面表示時のみ） ---------- */
+    .print-bar {
+      width: 210mm;
+      max-width: 100%;
+      background: #fff;
+      border-radius: 3mm;
+      padding: 5mm;
+      margin-bottom: 6mm;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .print-bar p {
+      font-size: 3.6mm;
+      color: var(--text-muted);
+      margin-bottom: 3mm;
+    }
+
+    .print-btn {
+      font-family: var(--font);
+      font-size: 4.2mm;
+      font-weight: 700;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      border-radius: 2mm;
+      padding: 3mm 10mm;
+      cursor: pointer;
+    }
+
+    .print-btn:hover { background: var(--brand-dark); }
+
+    /* ---------- 印刷設定 ---------- */
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+        display: block;
+      }
+
+      .poster {
+        box-shadow: none;
+        width: 210mm;
+        height: 297mm;
+        page-break-after: avoid;
+      }
+
+      .no-print { display: none !important; }
+    }
+
+    /* 背景色を印刷にも反映させる */
+    .poster,
+    .p-block-head,
+    .p-block-body,
+    .p-title-label,
+    .poster::before {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="print-bar no-print">
+    <p>A4サイズ・縦向きで印刷できます（背景の色を印刷する設定にしてください）</p>
+    <button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+  </div>
+
+  <div class="poster">
+
+    <header class="p-header">
+      <span class="p-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="1.25" y="1.25" width="37.5" height="37.5" rx="10" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M20 11v18M11 20h18" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>
+        <span class="p-name">宮平医院</span>
+        <span class="p-dept">小児科・内科</span>
+      </span>
+    </header>
+
+    <div class="p-title">
+      <span class="p-title-label">お知らせ</span>
+      <h1 class="p-title-main">10月の休診日</h1>
+      <p class="p-intro">院長都合により、下記の日程を休診とさせていただきます。</p>
+    </div>
+
+    <section class="p-block">
+      <p class="p-block-head">終 日 休 診</p>
+      <div class="p-block-body">
+        <ul class="p-dates">
+          <li>8<span class="p-dow">日（木）</span></li>
+          <li>15<span class="p-dow">日（木）</span></li>
+          <li>22<span class="p-dow">日（木）</span></li>
+          <li>29<span class="p-dow">日（木）</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="p-block is-partial">
+      <p class="p-block-head">一 部 休 診</p>
+      <div class="p-block-body">
+        <ul class="p-partial">
+          <li>
+            <span class="p-partial-date">6<span class="p-dow">日（火）</span></span>
+            <span class="p-partial-label">午前休診</span>
+            <span class="p-partial-note">午後は通常どおり診療</span>
+          </li>
+          <li>
+            <span class="p-partial-date">19<span class="p-dow">日（月）</span></span>
+            <span class="p-partial-label">午後休診</span>
+            <span class="p-partial-note">午前は通常どおり診療</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <p class="p-apology">
+      患者の皆さまには大変ご不便をおかけいたしますこと、<br>
+      心よりお詫び申し上げます。何卒ご理解賜りますようお願い申し上げます。
+    </p>
+
+    <footer class="p-footer">
+      <div>
+        <p class="p-hours-title">診 療 時 間</p>
+        <p class="p-hours">
+          10:00〜13:00／17:00〜19:00<br>
+          <span>休診日　木曜午前・土曜午後・日曜・祝日</span>
+        </p>
+      </div>
+      <div class="p-tel">
+        <p class="p-tel-label">お問い合わせ</p>
+        <p class="p-tel-number">03-3491-0366</p>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
