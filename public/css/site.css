@@ -783,6 +783,27 @@ body {
   flex-shrink: 0;
 }
 
+/* 外部サイトへのリンク */
+.ext-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.ext-link:hover {
+  text-decoration: underline;
+}
+
+.ext-link svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
 .tel-note {
   display: block;
   font-size: 0.8rem;
