@@ -783,6 +783,62 @@ body {
   flex-shrink: 0;
 }
 
+/* ---------- 院長紹介 ---------- */
+.doctor-role {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.doctor-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  margin-top: 0.1rem;
+}
+
+.doctor-tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
+}
+
+.doctor-tags li {
+  background: var(--brand-soft);
+  color: var(--brand-dark);
+  border-radius: 999px;
+  padding: 0.25rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* ---------- 外部サイトへのリンク ---------- */
+.ext-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.ext-link:hover {
+  text-decoration: underline;
+}
+
+.ext-link svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
 .tel-note {
   display: block;
   font-size: 0.8rem;
