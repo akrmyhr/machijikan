@@ -825,6 +825,18 @@ body {
   font-weight: 700;
 }
 
+/* ---------- PRバナー ---------- */
+.pr-banner {
+  display: block;
+  line-height: 0;
+}
+
+.pr-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* ---------- 外部サイトへのリンク ---------- */
 .ext-links {
   display: flex;
