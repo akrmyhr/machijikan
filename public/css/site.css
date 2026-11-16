@@ -825,7 +825,27 @@ body {
   font-weight: 700;
 }
 
+/* ---------- PRバナー ---------- */
+.pr-banner {
+  display: block;
+  line-height: 0;
+}
+
+.pr-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* ---------- 外部サイトへのリンク ---------- */
+.ext-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
 .ext-link {
   display: inline-flex;
   align-items: center;
