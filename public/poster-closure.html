@@ -112,7 +112,7 @@
     /* ---------- 見出し ---------- */
     .p-title {
       text-align: center;
-      margin-top: 4mm;
+      margin-top: 3mm;
     }
 
     .p-title-label {
@@ -128,7 +128,7 @@
     }
 
     .p-title-main {
-      font-size: 14mm;
+      font-size: 12mm;
       font-weight: 900;
       letter-spacing: 0.04em;
       line-height: 1.3;
@@ -139,12 +139,12 @@
       font-size: 5.2mm;
       line-height: 1.8;
       color: var(--text);
-      margin-top: 4mm;
+      margin-top: 3mm;
     }
 
     /* ---------- 休診ブロック ---------- */
     .p-block {
-      margin-top: 4mm;
+      margin-top: 3mm;
       border: 0.8mm solid var(--closed);
       border-radius: 3mm;
       overflow: hidden;
@@ -157,11 +157,11 @@
     .p-block-head {
       background: var(--closed);
       color: #fff;
-      font-size: 6.5mm;
+      font-size: 5.5mm;
       font-weight: 900;
       letter-spacing: 0.18em;
       text-align: center;
-      padding: 3mm 0;
+      padding: 2.5mm 0;
     }
 
     .p-block.is-partial .p-block-head {
@@ -169,7 +169,7 @@
     }
 
     .p-block-body {
-      padding: 4.5mm 6mm;
+      padding: 3.5mm 6mm;
       background: var(--closed-soft);
     }
 
@@ -199,7 +199,7 @@
     }
 
     .p-range-date {
-      font-size: 11mm;
+      font-size: 9.5mm;
       font-weight: 900;
       line-height: 1.25;
       color: var(--closed);
@@ -211,7 +211,7 @@
     }
 
     .p-range-sep {
-      font-size: 6mm;
+      font-size: 5mm;
       font-weight: 900;
       line-height: 1;
       color: var(--closed);
@@ -248,10 +248,10 @@
 
     .p-block-note {
       text-align: center;
-      font-size: 5mm;
+      font-size: 4.4mm;
       font-weight: 700;
       color: var(--text);
-      margin-top: 4mm;
+      margin-top: 3mm;
     }
 
     /* 一部休診（午前のみ／午後のみ）を2列で並べる */
@@ -301,9 +301,9 @@
 
     /* ---------- お詫び ---------- */
     .p-apology {
-      margin-top: 4mm;
+      margin-top: 3mm;
       text-align: center;
-      font-size: 4.8mm;
+      font-size: 4.4mm;
       line-height: 1.75;
       color: var(--text);
     }
@@ -444,12 +444,21 @@
 
     <div class="p-title">
       <span class="p-title-label">お知らせ</span>
-      <h1 class="p-title-main">年末年始の休診</h1>
-      <p class="p-intro">年末年始は下記のとおり休診とさせていただきます。</p>
+      <h1 class="p-title-main">12月〜1月の休診</h1>
+      <p class="p-intro">下記の日程を休診とさせていただきます。</p>
     </div>
 
     <section class="p-block">
-      <p class="p-block-head">休 診 期 間</p>
+      <p class="p-block-head">終 日 休 診</p>
+      <div class="p-block-body">
+        <p class="p-range">
+          <span class="p-range-date">12月5日<span class="p-dow">（土）</span></span>
+        </p>
+      </div>
+    </section>
+
+    <section class="p-block">
+      <p class="p-block-head">年 末 年 始 休 診</p>
       <div class="p-block-body">
         <p class="p-range">
           <span class="p-range-date">12月29日<span class="p-dow">（火）</span></span>
