@@ -313,6 +313,7 @@
     mainContainer.style.display = 'block';
     connectSSE();
     loadNews();
+    loadStats();
   }
 
   // --- 認証 ---
@@ -628,9 +629,140 @@
     saveNews();
   });
 
+  // ============================================================
+  //  アクセス状況
+  // ============================================================
+
+  var statsChart = document.getElementById('stats-chart');
+  var statsPages = document.getElementById('stats-pages');
+  var statsFrom = document.getElementById('stats-from');
+  var statsTo = document.getElementById('stats-to');
+  var statToday = document.getElementById('stat-today');
+  var statYesterday = document.getElementById('stat-yesterday');
+  var statPeriod = document.getElementById('stat-period');
+  var statPeriodLabel = document.getElementById('stat-period-label');
+  var rangeBtns = document.querySelectorAll('.range-btn');
+
+  var statsDays = 7;
+
+  var PAGE_LABELS = {
+    '/': 'トップページ',
+    '/doctor.html': '院長紹介',
+    '/news.html': 'お知らせ',
+    '/vaccine.html': '予防接種',
+    '/checkup.html': '健診・検診'
+  };
+
+  function formatDay(iso) {
+    var p = iso.split('-');
+    return Number(p[1]) + '/' + Number(p[2]);
+  }
+
+  function renderStats(data) {
+    var series = data.series || [];
+    if (series.length === 0) return;
+
+    var today = series[series.length - 1];
+    var yesterday = series.length > 1 ? series[series.length - 2] : null;
+    var total = series.reduce(function (sum, d) { return sum + d.total; }, 0);
+
+    statToday.textContent = today.total;
+    statYesterday.textContent = yesterday ? yesterday.total : '–';
+    statPeriod.textContent = total;
+    statPeriodLabel.textContent = statsDays + '日間';
+
+    // 日別の棒グラフ。全部0のときに全バーが最大になってしまわないよう max は1以上にする
+    var max = 1;
+    series.forEach(function (d) { if (d.total > max) max = d.total; });
+
+    statsChart.textContent = '';
+    series.forEach(function (d) {
+      var bar = document.createElement('div');
+      bar.className = 'stats-bar';
+      bar.title = d.date + '　' + d.total + 'PV';
+      var fill = document.createElement('div');
+      fill.className = 'stats-bar-fill';
+      // 0件の日はバーを出さず、1件以上は必ず見える高さにする
+      fill.style.height = d.total === 0 ? '0' : Math.max(4, (d.total / max) * 100) + '%';
+      bar.appendChild(fill);
+      statsChart.appendChild(bar);
+    });
+
+    statsFrom.textContent = formatDay(series[0].date);
+    statsTo.textContent = formatDay(today.date);
+
+    // ページ別の内訳（多い順）
+    var totals = data.totals || {};
+    var rows = Object.keys(totals)
+      .map(function (p) { return { page: p, n: totals[p] }; })
+      .sort(function (a, b) { return b.n - a.n; });
+
+    statsPages.textContent = '';
+    if (rows.length === 0) {
+      var empty = document.createElement('p');
+      empty.className = 'admin-empty';
+      empty.textContent = 'この期間のアクセスはまだありません。';
+      statsPages.appendChild(empty);
+      return;
+    }
+
+    var top = rows[0].n || 1;
+    rows.forEach(function (r) {
+      var row = document.createElement('div');
+      row.className = 'stats-page-row';
+
+      var name = document.createElement('span');
+      name.className = 'stats-page-name';
+      name.textContent = PAGE_LABELS[r.page] || r.page;
+
+      var track = document.createElement('span');
+      track.className = 'stats-page-track';
+      var fill = document.createElement('span');
+      fill.className = 'stats-page-fill';
+      fill.style.width = Math.max(2, (r.n / top) * 100) + '%';
+      track.appendChild(fill);
+
+      var num = document.createElement('span');
+      num.className = 'stats-page-num';
+      num.textContent = r.n;
+
+      row.appendChild(name);
+      row.appendChild(track);
+      row.appendChild(num);
+      statsPages.appendChild(row);
+    });
+  }
+
+  async function loadStats() {
+    try {
+      var res = await fetch('/api/stats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password, days: statsDays })
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) handleUnauthorized();
+        return;
+      }
+
+      renderStats(await res.json());
+    } catch (err) {
+      console.error('アクセス状況の取得エラー:', err);
+    }
+  }
+
+  rangeBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      statsDays = parseInt(btn.dataset.days, 10);
+      rangeBtns.forEach(function (b) { b.classList.remove('is-active'); });
+      btn.classList.add('is-active');
+      loadStats();
+    });
+  });
+
   // --- 自動ログイン試行 ---
-  var savedPw = loadSession();
-  if (savedPw) {
+  var savedPw = loadSession();  if (savedPw) {
     fetch('/api/update', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

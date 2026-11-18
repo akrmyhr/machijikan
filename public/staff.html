@@ -141,6 +141,41 @@
       <div id="news-admin-list"></div>
     </section>
 
+    <!-- アクセス状況 -->
+    <section class="stats-section" id="stats-section">
+      <div class="admin-head">
+        <h2 class="admin-title">アクセス状況</h2>
+        <div class="stats-range">
+          <button class="range-btn is-active" data-days="7" type="button">7日</button>
+          <button class="range-btn" data-days="30" type="button">30日</button>
+        </div>
+      </div>
+      <p class="admin-hint">ホームページが見られた回数です（スタッフページ・ポスターは含みません）。</p>
+
+      <div class="stats-summary">
+        <div class="stat-box">
+          <span class="stat-label">今日</span>
+          <span class="stat-value" id="stat-today">–</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">昨日</span>
+          <span class="stat-value" id="stat-yesterday">–</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label" id="stat-period-label">7日間</span>
+          <span class="stat-value" id="stat-period">–</span>
+        </div>
+      </div>
+
+      <div class="stats-chart" id="stats-chart"></div>
+      <div class="stats-axis">
+        <span id="stats-from"></span>
+        <span id="stats-to"></span>
+      </div>
+
+      <div class="stats-pages" id="stats-pages"></div>
+    </section>
+
     <div class="qr-section" id="qr-section">
       <button class="qr-toggle-btn" id="btn-qr-toggle">📱 患者用QRコードを表示</button>
       <div class="qr-panel hidden" id="qr-panel">
