@@ -96,9 +96,105 @@ function saveData() {
 
 loadData();
 
+// ============================================================
+//  アクセス集計
+//  日付（日本時間）×ページ の件数だけを保持する。
+//  IP・UA・Cookie は一切保存せず、個人を識別できる情報は持たない。
+// ============================================================
+const STATS_FILE = path.join(DATA_DIR, 'access.json');
+const STATS_RETENTION_DAYS = 180;
+
+// 集計対象のページ。スタッフ用・印刷用・操作ガイドは院内利用なので含めない
+const TRACKED_PAGES = {
+  '/': '/',
+  '/index.html': '/',
+  '/doctor.html': '/doctor.html',
+  '/news.html': '/news.html',
+  '/vaccine.html': '/vaccine.html',
+  '/checkup.html': '/checkup.html'
+};
+
+// 検索エンジンや各種クローラーを除外する（実際の来訪者数に近づけるため）
+const BOT_UA = /bot|crawler|spider|crawling|slurp|mediapartners|facebookexternalhit|embedly|preview|headlesschrome|lighthouse|python-requests|curl\/|wget|axios|go-http-client|okhttp|java\//i;
+
+let accessStats = {};   // { 'YYYY-MM-DD': { '/': 12, '/news.html': 3 } }
+let statsDirty = false;
+
+// Render は UTC で動くため、日本時間の日付に合わせる
+function todayJST() {
+  return new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
+function loadStats() {
+  try {
+    if (fs.existsSync(STATS_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(STATS_FILE, 'utf-8'));
+      if (parsed && typeof parsed === 'object') accessStats = parsed;
+    }
+  } catch (e) {
+    console.error('アクセス集計の読み込みエラー:', e.message);
+  }
+}
+
+function saveStats() {
+  if (!statsDirty) return;
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(STATS_FILE, JSON.stringify(accessStats), 'utf-8');
+    statsDirty = false;
+  } catch (e) {
+    console.error('アクセス集計の保存エラー:', e.message);
+  }
+}
+
+// 保存期間を過ぎた日を捨て、ファイルが際限なく育たないようにする
+function pruneStats() {
+  const cutoff = new Date(Date.now() + 9 * 60 * 60 * 1000 - STATS_RETENTION_DAYS * 86400000)
+    .toISOString().slice(0, 10);
+  let removed = false;
+  for (const day of Object.keys(accessStats)) {
+    if (day < cutoff) {
+      delete accessStats[day];
+      removed = true;
+    }
+  }
+  if (removed) statsDirty = true;
+}
+
+loadStats();
+
 // --- ミドルウェア ---
 app.use(express.json());
+
+// ページ表示を数える。静的配信より前に置く必要がある
+app.use((req, res, next) => {
+  if (req.method !== 'GET') return next();
+  const page = TRACKED_PAGES[req.path];
+  if (!page) return next();
+  if (BOT_UA.test(req.get('user-agent') || '')) return next();
+
+  const day = todayJST();
+  if (!accessStats[day]) accessStats[day] = {};
+  accessStats[day][page] = (accessStats[day][page] || 0) + 1;
+  statsDirty = true;
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 毎回ディスクに書くと負荷が無駄なので、変化があったときだけ定期的に書き出す
+setInterval(() => {
+  pruneStats();
+  saveStats();
+}, 60 * 1000).unref();
+
+// 再起動・再デプロイ時に取りこぼさないよう、終了前にも書き出す
+for (const sig of ['SIGTERM', 'SIGINT']) {
+  process.on(sig, () => {
+    saveStats();
+    process.exit(0);
+  });
+}
 
 // --- SSE クライアント管理 ---
 const sseClients = new Set();
@@ -322,6 +418,31 @@ app.delete('/api/news/:id', (req, res) => {
   broadcastSSE();
 
   res.json({ posts: sortedNews() });
+});
+
+// アクセス集計の取得（スタッフ用）
+app.post('/api/stats', (req, res) => {
+  if (!requireStaff(req, res)) return;
+
+  const requested = parseInt(req.body.days, 10);
+  const days = Math.min(Math.max(Number.isFinite(requested) ? requested : 30, 1), STATS_RETENTION_DAYS);
+
+  // 記録のない日も 0 として並べ、そのままグラフに使えるようにする
+  const nowJst = Date.now() + 9 * 60 * 60 * 1000;
+  const series = [];
+  const totals = {};
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date(nowJst - i * 86400000).toISOString().slice(0, 10);
+    const pages = accessStats[date] || {};
+    let total = 0;
+    for (const [page, n] of Object.entries(pages)) {
+      total += n;
+      totals[page] = (totals[page] || 0) + n;
+    }
+    series.push({ date, total });
+  }
+
+  res.json({ days, series, totals });
 });
 
 // ヘルスチェック（Render用）
